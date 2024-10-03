@@ -87,7 +87,7 @@ void draw_grid(SDL_Renderer* render, int width, int height,
                 case 0:
                     break;
                 case 1:
-                    SDL_SetRenderDrawColor(render, 255, 255, 0, 255);
+                    SDL_SetRenderDrawColor(render, 255, 237, 63, 255);
                     SDL_RenderDrawPoint(render, x, y);
                     break;
             }
