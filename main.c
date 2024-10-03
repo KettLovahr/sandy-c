@@ -55,7 +55,7 @@ int main() {
                                 if ((x * x + y * y) < (inter.draw_radius * inter.draw_radius)) {
                                     Particle newpart = {
                                         .type = 1,
-                                        .properties = 0,
+                                        .properties = 0x01,
                                     };
                                     grid[posx][posy] = newpart;
                                 }

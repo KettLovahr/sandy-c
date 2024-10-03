@@ -32,22 +32,25 @@ void execute_simulation_step(int width, int height,
 
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
+            Particle newpart = grid[x][y];
             switch(grid[x][y].type) {
                 case 0:
                     break;
                 case 1:
                     if (y < height - 1) {
-                        if (grid[x][y + 1].type == 0) {
-                            temp[x][y + 1] = grid[x][y];
+                        if (grid[x][y + 1].type == 0 || (grid[x][y + 1].properties & 1) == 1) {
+                            temp[x][y + 1] = newpart;
                         } else if (grid[x + 1][y + 1].type == 0) {
-                            temp[x + 1][y + 1] = grid[x][y];
+                            temp[x + 1][y + 1] = newpart;
                         } else if (grid[x - 1][y + 1].type == 0) {
-                            temp[x - 1][y + 1] = grid[x][y];
+                            temp[x - 1][y + 1] = newpart;
                         } else {
-                            temp[x][y] = grid[x][y];
+                            newpart.properties = newpart.properties & 0xFE;
+                            temp[x][y] = newpart;
                         }
                     } else {
-                        temp[x][y] = grid[x][y];
+                        newpart.properties = newpart.properties & 0xFE;
+                        temp[x][y] = newpart;
                     }
                     break;
             }
