@@ -1,9 +1,10 @@
 #include <SDL2/SDL_render.h>
-enum ParticleTypes {
+typedef enum ParticleTypes {
     NONE,
     SAND,
     ROCK,
-};
+    VOID = 255
+} ParticleTypes;
 
 #include <string.h>
 typedef struct Particle {
@@ -23,6 +24,24 @@ typedef struct Particle {
 // |
 // `-
 
+ParticleTypes get_particle_type_at(int width, int height, Particle grid[width][height], int x, int y) {
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+        return VOID;
+    } else {
+        return grid[x][y].type;
+    }
+}
+
+unsigned char get_particle_properties_at(int width, int height, Particle grid[width][height], int x, int y) {
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+        return 0x00;
+    } else {
+        return grid[x][y].properties;
+    }
+}
+
+#define at(X, Y) get_particle_type_at(width, height, grid, (X), (Y))
+#define prop(X, Y) get_particle_properties_at(width, height, grid, (X), (Y))
 
 void execute_simulation_step(int width, int height,
                              Particle grid[width][height]) {
@@ -38,11 +57,12 @@ void execute_simulation_step(int width, int height,
                     break;
                 case 1:
                     if (y < height - 1) {
-                        if (grid[x][y + 1].type == 0 || (grid[x][y + 1].properties & 1) == 1) {
+                        if (at(x, y + 1) == 0 || (prop(x, y + 1) & 1) == 1) {
                             temp[x][y + 1] = newpart;
-                        } else if (grid[x + 1][y + 1].type == 0) {
+                            newpart.properties = newpart.properties | 0x01;
+                        } else if (at(x + 1, y + 1) == 0) {
                             temp[x + 1][y + 1] = newpart;
-                        } else if (grid[x - 1][y + 1].type == 0) {
+                        } else if (at(x - 1, y + 1) == 0) {
                             temp[x - 1][y + 1] = newpart;
                         } else {
                             newpart.properties = newpart.properties & 0xFE;

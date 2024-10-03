@@ -28,6 +28,7 @@ AppContext spawn_window(int render_scale, int width, int height) {
 
 typedef struct Interface {
     SDL_bool running;
+    SDL_bool sim_paused;
     int mouse_x;
     int mouse_y;
     SDL_bool drawing;
