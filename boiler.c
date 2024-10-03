@@ -13,7 +13,7 @@ typedef struct AppContext {
 
 AppContext spawn_window(int render_scale, int width, int height) {
     SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_Window* win = SDL_CreateWindow("Sandy C", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+    SDL_Window* win = SDL_CreateWindow("Sandy C", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width * render_scale, height * render_scale, 0);
     SDL_Surface* surf = SDL_GetWindowSurface(win);
     SDL_Renderer* render = SDL_GetRenderer(win);
     SDL_RenderSetScale(render, render_scale, render_scale);
@@ -32,4 +32,4 @@ typedef struct Interface {
     int mouse_y;
     SDL_bool drawing;
     int draw_radius;
-} Interface;
+} UIState;

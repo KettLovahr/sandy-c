@@ -6,12 +6,13 @@
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
 
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 200
+#define HEIGHT 200
+#define SCALE 3
 
 int main() {
-    AppContext ctx = spawn_window(1, WIDTH, HEIGHT);
-    Interface inter = {
+    AppContext ctx = spawn_window(SCALE, WIDTH, HEIGHT);
+    UIState ui = {
         .mouse_x = 0,
         .mouse_y = 0,
         .running = SDL_TRUE,
@@ -20,39 +21,39 @@ int main() {
     };
     Particle grid[WIDTH][HEIGHT] = {0};
 
-    while (inter.running) {
+    while (ui.running) {
         SDL_Event event;
         SDL_PumpEvents();
 
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
-                inter.running = SDL_FALSE;
+                ui.running = SDL_FALSE;
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    inter.drawing = SDL_TRUE;
+                    ui.drawing = SDL_TRUE;
                 }
             }
 
             if (event.type == SDL_MOUSEBUTTONUP) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    inter.drawing = SDL_FALSE;
+                    ui.drawing = SDL_FALSE;
                 }
             }
 
             if (event.type == SDL_MOUSEMOTION) {
-                inter.mouse_x = event.motion.x;
-                inter.mouse_y = event.motion.y;
+                ui.mouse_x = event.motion.x / SCALE;
+                ui.mouse_y = event.motion.y / SCALE;
 
-                if (inter.drawing) {
-                    for (int x = -inter.draw_radius; x <= inter.draw_radius; x++) {
-                        for (int y = -inter.draw_radius; y <= inter.draw_radius; y++) {
-                            int posx = inter.mouse_x + x;
-                            int posy = inter.mouse_y + y;
+                if (ui.drawing) {
+                    for (int x = -ui.draw_radius; x <= ui.draw_radius; x++) {
+                        for (int y = -ui.draw_radius; y <= ui.draw_radius; y++) {
+                            int posx = ui.mouse_x + x;
+                            int posy = ui.mouse_y + y;
 
                             if (posx >= 0 && posy >= 0 && posx < WIDTH && posy < HEIGHT) {
-                                if ((x * x + y * y) < (inter.draw_radius * inter.draw_radius)) {
+                                if ((x * x + y * y) < (ui.draw_radius * ui.draw_radius)) {
                                     Particle newpart = {
                                         .type = 1,
                                         .properties = 0x01,
@@ -68,9 +69,9 @@ int main() {
 
             if (event.type == SDL_MOUSEWHEEL) {
                 if (event.wheel.y > 0) {
-                    if (inter.draw_radius < 64) {inter.draw_radius++;}
+                    if (ui.draw_radius < 64) {ui.draw_radius++;}
                 } else {
-                    if (inter.draw_radius > 1) {inter.draw_radius--;}
+                    if (ui.draw_radius > 1) {ui.draw_radius--;}
                 }
             }
         }
