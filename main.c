@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include "boiler.c"
 #include "sand.c"
 #include <SDL2/SDL_events.h>
@@ -73,11 +74,13 @@ int main() {
 
                     if (posx >= 0 && posy >= 0 && posx < WIDTH && posy < HEIGHT) {
                         if ((x * x + y * y) < (ui.draw_radius * ui.draw_radius)) {
-                            Particle newpart = {
-                                .type = 1,
-                                .properties = 0x01,
-                            };
-                            grid[posx][posy] = newpart;
+                            if (grid[posx][posy].type == 0) {
+                                Particle newpart = {
+                                    .type = 1,
+                                    .properties = 0x01,
+                                };
+                                grid[posx][posy] = newpart;
+                            }
                         }
                     }
 
