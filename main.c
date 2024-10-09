@@ -48,9 +48,10 @@ int main() {
                     }
                 }
                 if (event.key.keysym.sym == SDLK_COMMA) {
-                    ui.selected_particle--;
-                    if (ui.selected_particle < 0) {
+                    if (ui.selected_particle == 0) {
                         ui.selected_particle = 2;
+                    } else {
+                        ui.selected_particle--;
                     }
                 }
             }
