@@ -33,4 +33,5 @@ typedef struct Interface {
     int mouse_y;
     SDL_bool drawing;
     int draw_radius;
+    unsigned char selected_particle;
 } UIState;

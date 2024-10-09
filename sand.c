@@ -1,4 +1,7 @@
 #include <SDL2/SDL_render.h>
+#include <stdio.h>
+#include <string.h>
+
 typedef enum ParticleTypes {
     NONE,
     SAND,
@@ -6,7 +9,6 @@ typedef enum ParticleTypes {
     VOID = 255
 } ParticleTypes;
 
-#include <string.h>
 typedef struct Particle {
     unsigned char type;
     unsigned char properties;
@@ -53,16 +55,17 @@ void execute_simulation_step(int width, int height,
         for (int y = 0; y < height; y++) {
             Particle newpart = grid[x][y];
             switch(grid[x][y].type) {
-                case 0:
+                case NONE:
                     break;
-                case 1:
+                case SAND:
                     if (y < height - 1) {
-                        if (at(x, y + 1) == 0 || (prop(x, y + 1) & 1) == 1) {
+                        if (at(x, y + 1) == NONE || (prop(x, y + 1) & 1) == 1) {
                             temp[x][y + 1] = newpart;
                             newpart.properties = newpart.properties | 0x01;
-                        } else if (at(x + 1, y + 1) == 0) {
+                            fflush(stdout);
+                        } else if (at(x + 1, y + 1) == NONE) {
                             temp[x + 1][y + 1] = newpart;
-                        } else if (at(x - 1, y + 1) == 0) {
+                        } else if (at(x - 1, y + 1) == NONE) {
                             temp[x - 1][y + 1] = newpart;
                         } else {
                             newpart.properties = newpart.properties & 0xFE;
@@ -72,6 +75,10 @@ void execute_simulation_step(int width, int height,
                         newpart.properties = newpart.properties & 0xFE;
                         temp[x][y] = newpart;
                     }
+                    break;
+                case ROCK:
+                    newpart.properties = 0;
+                    temp[x][y] = newpart;
                     break;
             }
         }
@@ -84,10 +91,14 @@ void draw_grid(SDL_Renderer* render, int width, int height,
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
             switch(grid[x][y].type) {
-                case 0:
+                case NONE:
                     break;
-                case 1:
+                case SAND:
                     SDL_SetRenderDrawColor(render, 255, 237, 63, 255);
+                    SDL_RenderDrawPoint(render, x, y);
+                    break;
+                case ROCK:
+                    SDL_SetRenderDrawColor(render, 96, 96, 96, 255);
                     SDL_RenderDrawPoint(render, x, y);
                     break;
             }

@@ -1,3 +1,5 @@
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_video.h>
 #define SDL_MAIN_HANDLED
 #include "boiler.c"
 #include "sand.c"
@@ -21,6 +23,7 @@ int main() {
         .draw_radius = 1,
         .drawing = SDL_FALSE,
         .sim_paused = SDL_FALSE,
+        .selected_particle = 1,
     };
     Particle grid[WIDTH][HEIGHT] = {0};
 
@@ -36,6 +39,19 @@ int main() {
             if (event.type == SDL_KEYUP) {
                 if (event.key.keysym.sym == SDLK_SPACE) {
                     ui.sim_paused = !(ui.sim_paused);
+                }
+
+                if (event.key.keysym.sym == SDLK_PERIOD) {
+                    ui.selected_particle++;
+                    if (ui.selected_particle > 2) {
+                        ui.selected_particle = 0;
+                    }
+                }
+                if (event.key.keysym.sym == SDLK_COMMA) {
+                    ui.selected_particle--;
+                    if (ui.selected_particle < 0) {
+                        ui.selected_particle = 2;
+                    }
                 }
             }
 
@@ -74,9 +90,9 @@ int main() {
 
                     if (posx >= 0 && posy >= 0 && posx < WIDTH && posy < HEIGHT) {
                         if ((x * x + y * y) < (ui.draw_radius * ui.draw_radius)) {
-                            if (grid[posx][posy].type == 0) {
+                            if (grid[posx][posy].type == 0 || ui.selected_particle == NONE) {
                                 Particle newpart = {
-                                    .type = 1,
+                                    .type = ui.selected_particle,
                                     .properties = 0x01,
                                 };
                                 grid[posx][posy] = newpart;
@@ -99,4 +115,8 @@ int main() {
 
         SDL_Delay(1000.0 / 60);
     }
+
+    SDL_DestroyRenderer(ctx.render);
+    SDL_DestroyWindow(ctx.win);
+    SDL_Quit();
 }
